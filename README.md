@@ -9,7 +9,7 @@ This Discord bot lets users check current prices for a range of supported minera
 
 Upon adding the bot to your server, make sure to use the `!setchannel` command in the channel you want it to respond to commands in.
 
-### Bot Help Dialogue
+## Bot Help Dialogue
 `!help`
 
 Displays this help message
