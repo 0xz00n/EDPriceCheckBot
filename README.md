@@ -35,4 +35,7 @@ Sends DM to user when prices for LTD's reach 1.5mil with at least 2000 demand
 Removes user from DM list
 
 ## Running the bot from your own server
-Take a look at the deployment branch for a list of requirements.  It's currently set up for Heroku deployment, but can be run on any linux based machine.
+Gather the requirements:
+`python3 -m pip install -r requirements.txt`
+Run the bot:
+`python3 EDPriceCheckBot.py`
