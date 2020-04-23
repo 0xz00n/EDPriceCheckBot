@@ -36,6 +36,9 @@ Removes user from DM list
 
 ## Running the bot from your own server
 Gather the requirements:
+
 `python3 -m pip install -r requirements.txt`
+
 Run the bot:
+
 `python3 EDPriceCheckBot.py`
