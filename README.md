@@ -5,9 +5,21 @@ A Discord bot to check mineral prices and alert on high prices for Elite: Danger
 https://discordapp.com/oauth2/authorize?&client_id=701891610530807819&scope=bot&permissions=83968
 
 ## About
-This Discord bot lets users check current prices for a range of supported minerals.  Additionally, it will notify the primary channel of a high sell price (>1.5mil, >2000 demand) along with DMing any user that has signed up for alerts.  High price stations are added to a timeout list that expires after 24 hours to prevent DM/Channel spam.
+This Discord bot lets users check current prices for a range of supported minerals.  Additionally, it will notify the primary channel of a high sell price (>1.5mil, >2000 demand) along with DMing any user that has signed up for alerts with `!getalerts`.  High price stations are added to a timeout list that expires after 24 hours to prevent DM/Channel spam.
 
 Upon adding the bot to your server, make sure to use the `!setchannel` command in the channel you want it to respond to commands in.
+
+## Supported Minerals
+While using the `!check x` command where x is the mineral alias.
+| Mineral | Alias |
+| --- | --- |
+| Low Temp Diamonds | ltd,ltds |
+| Void Opals | vopal,vopals, void opal, void opals |
+| Painite | painite |
+| Benitoite | benitoite |
+| Musgravite | musgravite |
+| Grandidierite | grandidierite |
+| Serendibite | serendibite |
 
 ## Bot Help Dialogue
 `!help`
