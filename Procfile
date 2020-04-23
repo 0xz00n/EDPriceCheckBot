@@ -1,1 +1,1 @@
-worker: python3 EDPriceCheckBot.py
+worker: python EDPriceCheckBot.py
