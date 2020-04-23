@@ -39,6 +39,6 @@ Gather the requirements:
 
 `python3 -m pip install -r requirements.txt`
 
-Run the bot:
+Place your bot token in the same directory as the py file with the name `token` and run the bot:
 
 `python3 EDPriceCheckBot.py`
