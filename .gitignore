@@ -1,4 +1,5 @@
 *.lst
 *.pyc
 *.swp
+*.sh
 token
