@@ -125,8 +125,8 @@ class EDPriceCheckBot(discord.Client):
     def alert_checker(self):
         i = 0
         stationlst,systemlst,pricelst,demandlst,padsizelst,agelst = self.eddb_scraper('ltd')
-        price = pricelst[i].replace(',','')
         while i < 5:
+            price = pricelst[i].replace(',','')
             if int(price) >= 1500000:
                 demand = demandlst[i].replace(',','')
                 if int(demand) >= 2000:
