@@ -172,10 +172,12 @@ class EDPriceCheckBot(discord.Client):
                     for userid in self.dmset:
                         user = self.get_user(int(userid))
                         await user.send('**High price alert!**',embed=em)
+			await asyncio.sleep(1)
                     for member in self.memberset:
                         channelsplit = member.split(',')
                         channel = self.get_channel(int(channelsplit[1]))
                         await channel.send('**High price alert!**',embed=em)
+			await asyncio.sleep(1)
                     self.timeout_checker()
                     await asyncio.sleep(60)
                 else:
