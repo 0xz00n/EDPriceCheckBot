@@ -25,6 +25,8 @@ class EDPriceCheckBot(discord.Client):
         self.timeoutdict = {}
         self.tokenfile = open('token','r')
         self.TOKEN = self.tokenfile.readline().rstrip()
+        self.botadminfile = open('botadmin','r')
+        self.botadmin = int(self.botadminfile.readline().rstrip())
         self.bgtask1 = self.loop.create_task(self.price_watcher())
 
     def eddb_scraper(self,commodity):
@@ -212,6 +214,14 @@ class EDPriceCheckBot(discord.Client):
         #Don't reply to yourself
         if message.author == self.user:
             return
+
+        #Reload DM and Membership sets as long as it's from the bot owner
+        if message.content.startswith('!reloadsets'):
+            if message.author.id == self.botadmin:
+                self.alertset_gen()
+                self.memberset_gen()
+                print(self.memberset)
+                print(self.dmset)
 
         #Set primary channel
         if message.content.startswith('!setchannel'):
