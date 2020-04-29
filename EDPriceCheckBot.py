@@ -145,7 +145,7 @@ class EDPriceCheckBot(discord.Client):
                         idescription+='Sell price: **' + pricelst[i] + '**\n'
                         idescription+='Demand: **' + demandlst[i] + '**\n'
                         idescription+='Pad size: **' + padsizelst[i] + '**\n'
-                        idescription+='Time since last update: **' + agelst[i] + '**\n\n'
+                        idescription+='Time since last update: **' + agelst[i] + '**\n'
             i += 1
         if not idescription == '':
             ititle = '**High LTD price alert!**'
@@ -269,17 +269,22 @@ class EDPriceCheckBot(discord.Client):
             stationlst,systemlst,pricelst,demandlst,padsizelst,agelst = self.eddb_scraper(content)
             if stationlst:
                 i = 0
+                idescription = ''
                 while i < 5:
-                    ititle = stationlst[i] + ', ' + systemlst[i]
-                    idescription = 'Sell price: **' + pricelst[i] + '**\n'
+                    idescription+='\n**' + stationlst[i] + ', ' + systemlst[i] + '**\n'
+                    idescription+='Sell price: **' + pricelst[i] + '**\n'
                     idescription+='Demand: **' + demandlst[i] + '**\n'
                     idescription+='Pad size: **' + padsizelst[i] + '**\n'
-                    idescription+='Time since last update: **' + agelst[i] + '**'
+                    idescription+='Time since last update: **' + agelst[i] + '**\n'
+                    i += 1
+                if not idescription == '':
+                    ititle = '**Top 5 prices for ' + content + '**'
                     em = discord.Embed(
                         title=ititle,
                         description=idescription,
                         color=0x00FF00
                     )
+
                     await message.channel.send(embed=em)
                     i += 1
             else:
