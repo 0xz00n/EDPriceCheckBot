@@ -6,6 +6,7 @@ import discord
 import asyncio
 import requests
 from bs4 import BeautifulSoup
+from datetime import datetime
 #Logging stuff for when stuff just stops working
 #import logging
 #logger = logging.getLogger('discord')
@@ -24,7 +25,7 @@ class EDPriceCheckBot(discord.Client):
         self.timeoutdict = {}
         self.tokenfile = open('token','r')
         self.TOKEN = self.tokenfile.readline().rstrip()
-        self.bgtask = self.loop.create_task(self.price_watcher())
+        self.bgtask1 = self.loop.create_task(self.price_watcher())
 
     def eddb_scraper(self,commodity):
         stationlst = []
@@ -132,6 +133,7 @@ class EDPriceCheckBot(discord.Client):
     def alert_checker(self):
         i = 0
         stationlst,systemlst,pricelst,demandlst,padsizelst,agelst = self.eddb_scraper('ltd')
+        idescription = ''
         while i < 5:
             price = pricelst[i].replace(',','')
             if int(price) >= 1500000:
@@ -139,29 +141,32 @@ class EDPriceCheckBot(discord.Client):
                 if int(demand) >= 2000:
                     if not stationlst[i] in self.timeoutlst:
                         self.timeoutlst.append(stationlst[i])
-                        ititle = stationlst[i] + ', ' + systemlst[i]
-                        idescription = 'Sell price: **' + pricelst[i] + '**\n'
+                        idescription+='\n**' + stationlst[i] + ', ' + systemlst[i] + '**\n'
+                        idescription+='Sell price: **' + pricelst[i] + '**\n'
                         idescription+='Demand: **' + demandlst[i] + '**\n'
                         idescription+='Pad size: **' + padsizelst[i] + '**\n'
-                        idescription+='Time since last update: **' + agelst[i] + '**'
-                        em = discord.Embed(
-                            title=ititle,
-                            description=idescription,
-                            color=0x00FF00
-                        )
-                        return em
+                        idescription+='Time since last update: **' + agelst[i] + '**\n\n'
             i += 1
-        em = None
-        return em
+        if not idescription == '':
+            ititle = '**High LTD price alert!**'
+            em = discord.Embed(
+                title=ititle,
+                description=idescription,
+                color=0x00FF00
+            )
+            return em
+        else:
+            em = None
+            return em
 
     def timeout_checker(self):
         if self.timeoutlst:
             for entry in self.timeoutlst:
                 if not entry in self.timeoutdict:
-                    self.timeoutdict[entry] = 1440
+                    self.timeoutdict[entry] = datetime.now()
                 else:
-                    self.timeoutdict[entry] -= 1
-                    if self.timeoutdict[entry] == 0:
+                    timediff = datetime.now() - self.timeoutdict[entry]
+                    if int(timediff.total_seconds()) >= 86400:
                         del self.timeoutdict[entry]
                         self.timeoutlst.remove(entry)
 
@@ -172,19 +177,19 @@ class EDPriceCheckBot(discord.Client):
         while not self.is_closed():
             if self.launch == 0:
                 self.launch = 1
-                await asyncio.sleep(60)
+                await asyncio.sleep(1)
             else:
                 em = self.alert_checker()
                 if em is not None:
                     for userid in self.dmset:
                         user = self.get_user(int(userid))
-                        await user.send('**High price alert!**',embed=em)
-                        await asyncio.sleep(1)
+                        await user.send(embed=em)
+                        await asyncio.sleep(1.25)
                     for member in self.memberset:
                         channelsplit = member.split(',')
                         channel = self.get_channel(int(channelsplit[1]))
-                        await channel.send('**High price alert!**',embed=em)
-                        await asyncio.sleep(1)
+                        await channel.send(embed=em)
+                        await asyncio.sleep(1.25)
                     self.timeout_checker()
                     await asyncio.sleep(60)
                 else:
