@@ -32,25 +32,25 @@ class EDPriceCheckBot(discord.Client):
             stationlst,systemlst,pricelst,demandlst,padsizelst,agelst = self.cmdty_reader('lowtemperaturediamond')
             return stationlst,systemlst,pricelst,demandlst,padsizelst,agelst
         elif commodity.lower() == 'vopals' or commodity.lower() == 'void opals':
-            stationlst,systemlst,pricelst,demandlst,padsizelst,agelst = self.cmdty_reader('lowtemperaturediamond')
+            stationlst,systemlst,pricelst,demandlst,padsizelst,agelst = self.cmdty_reader('opal')
             return stationlst,systemlst,pricelst,demandlst,padsizelst,agelst
         elif commodity.lower() == 'vopal' or commodity.lower() == 'void opal':
-            stationlst,systemlst,pricelst,demandlst,padsizelst,agelst = self.cmdty_reader('lowtemperaturediamond')
+            stationlst,systemlst,pricelst,demandlst,padsizelst,agelst = self.cmdty_reader('opal')
             return stationlst,systemlst,pricelst,demandlst,padsizelst,agelst
         elif commodity.lower() == 'painite':
-            stationlst,systemlst,pricelst,demandlst,padsizelst,agelst = self.cmdty_reader('lowtemperaturediamond')
+            stationlst,systemlst,pricelst,demandlst,padsizelst,agelst = self.cmdty_reader('painite')
             return stationlst,systemlst,pricelst,demandlst,padsizelst,agelst
         elif commodity.lower() == 'benitoite':
-            stationlst,systemlst,pricelst,demandlst,padsizelst,agelst = self.cmdty_reader('lowtemperaturediamond')
+            stationlst,systemlst,pricelst,demandlst,padsizelst,agelst = self.cmdty_reader('benitoite')
             return stationlst,systemlst,pricelst,demandlst,padsizelst,agelst
         elif commodity.lower() == 'musgravite':
-            stationlst,systemlst,pricelst,demandlst,padsizelst,agelst = self.cmdty_reader('lowtemperaturediamond') 
+            stationlst,systemlst,pricelst,demandlst,padsizelst,agelst = self.cmdty_reader('musgravite') 
             return stationlst,systemlst,pricelst,demandlst,padsizelst,agelst
         elif commodity.lower() == 'grandidierite':
-            stationlst,systemlst,pricelst,demandlst,padsizelst,agelst = self.cmdty_reader('lowtemperaturediamond')
+            stationlst,systemlst,pricelst,demandlst,padsizelst,agelst = self.cmdty_reader('grandidierite')
             return stationlst,systemlst,pricelst,demandlst,padsizelst,agelst
         elif commodity.lower() == 'serendibite':
-            stationlst,systemlst,pricelst,demandlst,padsizelst,agelst = self.cmdty_reader('lowtemperaturediamond')
+            stationlst,systemlst,pricelst,demandlst,padsizelst,agelst = self.cmdty_reader('serendibite')
             return stationlst,systemlst,pricelst,demandlst,padsizelst,agelst
         else:
             stationlst = []
