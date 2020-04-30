@@ -12,6 +12,7 @@ class EDDNListener():
     def __init__(self):
         self.eddnrelay = 'tcp://eddn.edcd.io:9500'
         self.eddntimeout = 600000
+        self.backoff = False
         self.ltddict = {}
         self.opaldict = {}
         self.paindict = {}
@@ -125,9 +126,11 @@ class EDDNListener():
             jsonmsg = json.loads(r.text)
             ratelimit = int(r.headers['X-Rate-Limit-Remaining'])
             if ratelimit < 360:
-                sleep(10)
-            elif ratelimit < 540:
-                sleep(5)
+                self.backoff = True
+            elif ratelimit == 720:
+                self.backoff = False
+            if self.backoff == True:
+                sleep(6)
             for entry in jsonmsg['stations']:
                 if entry['name'] == station:
                     if 'outpost' in entry['type'].lower():
@@ -136,7 +139,11 @@ class EDDNListener():
                     else:
                         size = 'L'
                         return size
-        except:
+        except Exception as e:
+            sleep(10)
+            print(e)
+            print(r.headers)
+            print(r.text)
             size = 'Unknown'
             return size
 
