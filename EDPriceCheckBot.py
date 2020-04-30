@@ -4,8 +4,6 @@ import os
 import re
 import discord
 import asyncio
-import requests
-from bs4 import BeautifulSoup
 from datetime import datetime
 #Logging stuff for when stuff just stops working
 #import logging
