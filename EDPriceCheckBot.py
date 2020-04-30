@@ -29,44 +29,58 @@ class EDPriceCheckBot(discord.Client):
         self.botadmin = int(self.botadminfile.readline().rstrip())
         self.bgtask1 = self.loop.create_task(self.price_watcher())
 
-    def eddb_scraper(self,commodity):
+    def price_grabber(self,commodity):
+        if commodity.lower() == 'ltd' or commodity.lower() == 'ltds':
+            stationlst,systemlst,pricelst,demandlst,padsizelst,agelst = self.cmdty_reader('lowtemperaturediamond')
+            return stationlst,systemlst,pricelst,demandlst,padsizelst,agelst
+        elif commodity.lower() == 'vopals' or commodity.lower() == 'void opals':
+            stationlst,systemlst,pricelst,demandlst,padsizelst,agelst = self.cmdty_reader('lowtemperaturediamond')
+            return stationlst,systemlst,pricelst,demandlst,padsizelst,agelst
+        elif commodity.lower() == 'vopal' or commodity.lower() == 'void opal':
+            stationlst,systemlst,pricelst,demandlst,padsizelst,agelst = self.cmdty_reader('lowtemperaturediamond')
+            return stationlst,systemlst,pricelst,demandlst,padsizelst,agelst
+        elif commodity.lower() == 'painite':
+            stationlst,systemlst,pricelst,demandlst,padsizelst,agelst = self.cmdty_reader('lowtemperaturediamond')
+            return stationlst,systemlst,pricelst,demandlst,padsizelst,agelst
+        elif commodity.lower() == 'benitoite':
+            stationlst,systemlst,pricelst,demandlst,padsizelst,agelst = self.cmdty_reader('lowtemperaturediamond')
+            return stationlst,systemlst,pricelst,demandlst,padsizelst,agelst
+        elif commodity.lower() == 'musgravite':
+            stationlst,systemlst,pricelst,demandlst,padsizelst,agelst = self.cmdty_reader('lowtemperaturediamond') 
+            return stationlst,systemlst,pricelst,demandlst,padsizelst,agelst
+        elif commodity.lower() == 'grandidierite':
+            stationlst,systemlst,pricelst,demandlst,padsizelst,agelst = self.cmdty_reader('lowtemperaturediamond')
+            return stationlst,systemlst,pricelst,demandlst,padsizelst,agelst
+        elif commodity.lower() == 'serendibite':
+            stationlst,systemlst,pricelst,demandlst,padsizelst,agelst = self.cmdty_reader('lowtemperaturediamond')
+            return stationlst,systemlst,pricelst,demandlst,padsizelst,agelst
+        else:
+            stationlst = []
+            systemlst = []
+            pricelst = []
+            demandlst = []
+            padsizelst = []
+            agelst = []
+            return stationlst,systemlst,pricelst,demandlst,padsizelst,agelst
+
+    def cmdty_reader(self,cmdty):
         stationlst = []
         systemlst = []
         pricelst = []
         demandlst = []
         padsizelst = []
         agelst = []
-        if commodity.lower() == 'ltd' or commodity.lower() == 'ltds':
-            cmdtynum = '276'
-        elif commodity.lower() == 'vopals' or commodity.lower() == 'void opals':
-            cmdtynum = '350'
-        elif commodity.lower() == 'vopal' or commodity.lower() == 'void opal':
-            cmdtynum = '350'
-        elif commodity.lower() == 'painite':
-            cmdtynum = '83'
-        elif commodity.lower() == 'benitoite':
-            cmdtynum = '347'
-        elif commodity.lower() == 'musgravite':
-            cmdtynum = '346'
-        elif commodity.lower() == 'grandidierite':
-            cmdtynum = '348'
-        elif commodity.lower() == 'serendibite':
-            cmdtynum = '344'
-        else:
+        with open(cmdty) as f:
+            lines = f.readlines()
+            for line in lines:
+                linesplit = line.split(',')
+                stationlst.append(linesplit[0])
+                systemlst.append(linesplit[1])
+                pricelst.append('{:,}'.format(int(linesplit[2])))
+                demandlst.append('{:,}'.format(int(linesplit[3])))
+                padsizelst.append(linesplit[4])
+                agelst.append(linesplit[5])
             return stationlst,systemlst,pricelst,demandlst,padsizelst,agelst
-        r = requests.get('https://eddb.io/commodity/' + cmdtynum)
-        soup = BeautifulSoup(r.text, 'html.parser')
-        table = soup.find('table')
-        tablelen = (len(table.findAll('tr')) - 1)
-        for row in table.findAll('tr')[1:tablelen]:
-            col = row.findAll('td')
-            stationlst.append(col[0].getText(strip=True))
-            systemlst.append(col[1].getText(strip=True))
-            pricelst.append(col[2].getText(strip=True))
-            demandlst.append(col[4].getText(strip=True))
-            padsizelst.append(col[5].getText(strip=True))
-            agelst.append(re.split('}}', col[6].getText(strip=True))[-1])
-        return stationlst,systemlst,pricelst,demandlst,padsizelst,agelst
 
     def file_create_check(self):
         if not os.path.exists('membership.lst'):
@@ -134,7 +148,7 @@ class EDPriceCheckBot(discord.Client):
 
     def alert_checker(self):
         i = 0
-        stationlst,systemlst,pricelst,demandlst,padsizelst,agelst = self.eddb_scraper('ltd')
+        stationlst,systemlst,pricelst,demandlst,padsizelst,agelst = self.price_grabber('ltd')
         idescription = ''
         while i < 5:
             price = pricelst[i].replace(',','')
@@ -147,7 +161,7 @@ class EDPriceCheckBot(discord.Client):
                         idescription+='Sell price: **' + pricelst[i] + '**\n'
                         idescription+='Demand: **' + demandlst[i] + '**\n'
                         idescription+='Pad size: **' + padsizelst[i] + '**\n'
-                        idescription+='Time since last update: **' + agelst[i] + '**\n'
+                        idescription+='Time since last update: **' + agelst[i] + '**'
             i += 1
         if not idescription == '':
             ititle = '**High LTD price alert!**'
@@ -276,7 +290,7 @@ class EDPriceCheckBot(discord.Client):
         #Mineral check
         if message.content.startswith('!check'):
             content = re.split('!check ', message.content)[-1]
-            stationlst,systemlst,pricelst,demandlst,padsizelst,agelst = self.eddb_scraper(content)
+            stationlst,systemlst,pricelst,demandlst,padsizelst,agelst = self.price_grabber(content)
             if stationlst:
                 i = 0
                 idescription = ''
@@ -285,7 +299,7 @@ class EDPriceCheckBot(discord.Client):
                     idescription+='Sell price: **' + pricelst[i] + '**\n'
                     idescription+='Demand: **' + demandlst[i] + '**\n'
                     idescription+='Pad size: **' + padsizelst[i] + '**\n'
-                    idescription+='Time since last update: **' + agelst[i] + '**\n'
+                    idescription+='Time since last update: **' + agelst[i] + '**'
                     i += 1
                 if not idescription == '':
                     ititle = '**Top 5 prices for ' + content + '**'
