@@ -198,17 +198,17 @@ class EDPriceCheckBot(discord.Client):
                     for userid in self.dmset:
                         user = self.get_user(int(userid))
                         await user.send(embed=em)
-                        await asyncio.sleep(1.25)
+                        await asyncio.sleep(1.5)
                     for member in self.memberset:
                         channelsplit = member.split(',')
                         channel = self.get_channel(int(channelsplit[1]))
                         await channel.send(embed=em)
-                        await asyncio.sleep(1.25)
+                        await asyncio.sleep(1.5)
                     self.timeout_checker()
-                    await asyncio.sleep(60)
+                    await asyncio.sleep(1)
                 else:
                     self.timeout_checker()
-                    await asyncio.sleep(60)
+                    await asyncio.sleep(1)
 
     async def on_guild_channel_delete(self,channel):
         self.member_delete(channel)
