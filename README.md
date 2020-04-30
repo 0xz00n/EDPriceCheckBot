@@ -9,6 +9,10 @@ EDPriceCheckBot lets users check current prices for a range of supported mineral
 
 Upon adding the bot to your server, make sure to use the `!setchannel` command in the channel you want it to respond to commands in.
 
+## Need help?
+You can find me in the EDCD discord as Nephilumos(EDPriceCheckBot/ATEL)
+https://discord.gg/zQjjutY
+
 ## Supported Minerals
 While using the `!check x` command where x is the mineral alias.
 | Mineral | Alias |
