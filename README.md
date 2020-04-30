@@ -11,6 +11,7 @@ Upon adding the bot to your server, make sure to use the `!setchannel` command i
 
 ## Need help?
 You can find me in the EDCD discord as Nephilumos(EDPriceCheckBot/ATEL)
+
 https://discord.gg/zQjjutY
 
 ## Supported Minerals
