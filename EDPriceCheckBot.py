@@ -200,7 +200,7 @@ class EDPriceCheckBot(discord.Client):
                     for userid in self.dmset:
                         try:
                             user = self.get_user(int(userid))
-                            print("Sending alert to user")
+                            print("Sending alert to user " + str(userid))
                             await user.send(embed=em)
                             await asyncio.sleep(1.5)
                         except Exception as e:
