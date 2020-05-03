@@ -153,8 +153,8 @@ class EDPriceCheckBot(discord.Client):
             if int(price) >= 1500000:
                 demand = demandlst[i].replace(',','')
                 if int(demand) >= 2000:
-                    print(stationlst[i] + ', ' + systemlst[i] + " has high LTD sell price!")
                     if not stationlst[i] in self.timeoutlst:
+                        print(stationlst[i] + ', ' + systemlst[i] + " has high LTD sell price!")
                         self.timeoutlst.append(stationlst[i])
                         idescription+='\n**' + stationlst[i] + ', ' + systemlst[i] + '**\n'
                         idescription+='Sell price: **' + pricelst[i] + '**\n'
@@ -197,20 +197,25 @@ class EDPriceCheckBot(discord.Client):
             else:
                 em = self.alert_checker()
                 if em is not None:
-                    try:
-                        for userid in self.dmset:
+                    for userid in self.dmset:
+                        try:
                             user = self.get_user(int(userid))
                             print("Sending alert to user")
                             await user.send(embed=em)
                             await asyncio.sleep(1.5)
-                        for member in self.memberset:
+                        except Exception as e:
+                            print("Error on user send: " + e)
+                            continue
+                    for member in self.memberset:
+                        try:
                             channelsplit = member.split(',')
                             channel = self.get_channel(int(channelsplit[1]))
                             print("Sending alert to channel")
                             await channel.send(embed=em)
                             await asyncio.sleep(1.5)
-                    except Exception as e:
-                        print(e)
+                        except Exception as e:
+                            print("Error on channel send: " + e)
+                            continue
                     self.timeout_checker()
                     await asyncio.sleep(1)
                 else:
