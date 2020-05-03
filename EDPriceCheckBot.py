@@ -197,17 +197,20 @@ class EDPriceCheckBot(discord.Client):
             else:
                 em = self.alert_checker()
                 if em is not None:
-                    for userid in self.dmset:
-                        user = self.get_user(int(userid))
-                        print("Sending alert to user")
-                        await user.send(embed=em)
-                        await asyncio.sleep(1.5)
-                    for member in self.memberset:
-                        channelsplit = member.split(',')
-                        channel = self.get_channel(int(channelsplit[1]))
-                        print("Sending alert to channel")
-                        await channel.send(embed=em)
-                        await asyncio.sleep(1.5)
+                    try:
+                        for userid in self.dmset:
+                            user = self.get_user(int(userid))
+                            print("Sending alert to user")
+                            await user.send(embed=em)
+                            await asyncio.sleep(1.5)
+                        for member in self.memberset:
+                            channelsplit = member.split(',')
+                            channel = self.get_channel(int(channelsplit[1]))
+                            print("Sending alert to channel")
+                            await channel.send(embed=em)
+                            await asyncio.sleep(1.5)
+                    except Exception as e:
+                        print(e)
                     self.timeout_checker()
                     await asyncio.sleep(1)
                 else:
