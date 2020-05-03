@@ -153,6 +153,7 @@ class EDPriceCheckBot(discord.Client):
             if int(price) >= 1500000:
                 demand = demandlst[i].replace(',','')
                 if int(demand) >= 2000:
+                    print(stationlst[i] + ', ' + systemlst[i] + " has high LTD sell price!")
                     if not stationlst[i] in self.timeoutlst:
                         self.timeoutlst.append(stationlst[i])
                         idescription+='\n**' + stationlst[i] + ', ' + systemlst[i] + '**\n'
@@ -181,6 +182,7 @@ class EDPriceCheckBot(discord.Client):
                 else:
                     timediff = datetime.now() - self.timeoutdict[entry]
                     if int(timediff.total_seconds()) >= 86400:
+                        print("Timeout reached for " + entry)
                         del self.timeoutdict[entry]
                         self.timeoutlst.remove(entry)
 
@@ -197,11 +199,13 @@ class EDPriceCheckBot(discord.Client):
                 if em is not None:
                     for userid in self.dmset:
                         user = self.get_user(int(userid))
+                        print("Sending alert to user")
                         await user.send(embed=em)
                         await asyncio.sleep(1.5)
                     for member in self.memberset:
                         channelsplit = member.split(',')
                         channel = self.get_channel(int(channelsplit[1]))
+                        print("Sending alert to channel")
                         await channel.send(embed=em)
                         await asyncio.sleep(1.5)
                     self.timeout_checker()
@@ -232,8 +236,7 @@ class EDPriceCheckBot(discord.Client):
             if message.author.id == self.botadmin:
                 self.alertset_gen()
                 self.memberset_gen()
-                print(self.memberset)
-                print(self.dmset)
+                print("Both sets regenerated")
 
         #Set primary channel
         if message.content.startswith('!setchannel'):
