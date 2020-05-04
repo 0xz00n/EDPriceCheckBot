@@ -142,8 +142,9 @@ class EDDNListener():
         except Exception as e:
             sleep(10)
             print(e)
-            print(r.headers)
-            print(r.text)
+            if not r == None:
+                print(r.headers)
+                print(r.text)
             size = 'Unknown'
             return size
 
