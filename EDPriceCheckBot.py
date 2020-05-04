@@ -141,6 +141,26 @@ class EDPriceCheckBot(discord.Client):
         self.memberset = set()
         self.memberset_gen()
 
+    def channel_delete(self,channel):
+        with open('membership.lst','r') as f:
+            lines = f.readlines()
+        with open('membership.lst','w') as f:
+            for line in lines:
+                if not str(channel) in line.strip('\n'):
+                    f.write(line)
+        self.memberset = set()
+        self.memberset_gen()
+
+    def dm_delete(self,user):
+        with open('membership.lst','r') as f:
+            lines = f.readlines()
+        with open('membership.lst','w') as f:
+            for line in lines:
+                if not str(user) in line.strip('\n'):
+                    f.write(line)
+        self.dmset = set()
+        self.alertset_gen()
+
     def unset_channel(self,messagechannel):
         self.member_delete(messagechannel)
 
@@ -198,24 +218,25 @@ class EDPriceCheckBot(discord.Client):
                 em = self.alert_checker()
                 if em is not None:
                     for userid in self.dmset:
-                        try:
-                            user = self.get_user(int(userid))
+                        user = self.get_user(int(userid))
+                        if not user is None:
                             print("Sending alert to user " + str(userid))
                             await user.send(embed=em)
-                            await asyncio.sleep(1.5)
-                        except Exception as e:
-                            print("Error on user send: " + e)
-                            continue
+                            await asyncio.sleep(1)
+                        else:
+                            print("Deleting invalid user " + str(userid))
+                            self.dm_delete(userid)
                     for member in self.memberset:
-                        try:
-                            channelsplit = member.split(',')
-                            channel = self.get_channel(int(channelsplit[1]))
+                        channelsplit = member.split(',')
+                        channel = self.get_channel(int(channelsplit[1]))
+                        if not channel is None:
                             print("Sending alert to channel")
                             await channel.send(embed=em)
-                            await asyncio.sleep(1.5)
-                        except Exception as e:
-                            print("Error on channel send: " + e)
-                            continue
+                            await asyncio.sleep(1)
+                        else:
+                            print("Deleting invalid channel " + str(member))
+                            self.channel_delete(channelsplit[1])
+                    print("Done sending alerts to users")
                     self.timeout_checker()
                     await asyncio.sleep(1)
                 else:
@@ -223,9 +244,11 @@ class EDPriceCheckBot(discord.Client):
                     await asyncio.sleep(1)
 
     async def on_guild_channel_delete(self,channel):
+        print("Bot removed from channel " + str(channel))
         self.member_delete(channel)
 
     async def on_guild_remove(self,guild):
+        print("Bot removed from server " + str(guild))
         self.member_delete(guild)
 
     async def on_message(self,message):
