@@ -130,7 +130,7 @@ class EDDNListener():
             elif ratelimit == 720:
                 self.backoff = False
             if self.backoff == True:
-                sleep(30)
+                sleep(10)
             for entry in jsonmsg['stations']:
                 if entry['name'] == station:
                     if 'outpost' in entry['type'].lower():
