@@ -21,6 +21,8 @@ class EDPriceCheckBot(discord.Client):
         self.dmset = set()
         self.timeoutlst = []
         self.timeoutdict = {}
+        self.timeouttime = 60 * 1440
+        self.lastcheck = datetime.now()
         self.tokenfile = open('token','r')
         self.TOKEN = self.tokenfile.readline().rstrip()
         self.botadminfile = open('botadmin','r')
@@ -152,11 +154,11 @@ class EDPriceCheckBot(discord.Client):
         self.memberset_gen()
 
     def dm_delete(self,user):
-        with open('membership.lst','r') as f:
+        with open('dm.lst','r') as f:
             lines = f.readlines()
-        with open('membership.lst','w') as f:
+        with open('dm.lst','w') as f:
             for line in lines:
-                if not str(user) in line.strip('\n'):
+                if not str(user) == line.strip('\n'):
                     f.write(line)
         self.dmset = set()
         self.alertset_gen()
@@ -201,10 +203,40 @@ class EDPriceCheckBot(discord.Client):
                     self.timeoutdict[entry] = datetime.now()
                 else:
                     timediff = datetime.now() - self.timeoutdict[entry]
-                    if int(timediff.total_seconds()) >= 86400:
+                    checkdiff = datetime.now() - self.lastcheck
+                    if int(timediff.total_seconds()) >= self.timeouttime:
+                        self.lastcheck = datetime.now()
                         print("Timeout reached for " + entry)
                         del self.timeoutdict[entry]
                         self.timeoutlst.remove(entry)
+                    elif int(checkdiff.total_seconds()) >= 60*60:
+                        self.lastcheck = datetime.now()
+                        print("----------------------------------")
+                        for entry in self.timeoutlst:
+                            convertedtime = self.time_converter(self.timeoutdict[entry])
+                            print(convertedtime + " remaining on " + entry + " timeout")
+                        print("----------------------------------")
+
+    def time_converter(self,timeobj):
+        timediff = datetime.now() - timeobj
+        timeinsec = self.timeouttime - int(timediff.total_seconds())
+        if timeinsec >= 60:
+            timeinmin = timeinsec//60
+            if timeinmin >= 60:
+                timeinhr = timeinmin//60
+                if timeinhr >= 24:
+                    timeinday = timeinhr//24
+                    timeinday = str(timeinday) + ' days'
+                    return timeinday
+                else:
+                    timeinhr = str(timeinhr) + ' hours'
+                    return timeinhr
+            else:
+                timeinmin = str(timeinmin) + ' mins'
+                return timeinmin
+        else:
+            timeinsec = str(timeinsec) + ' secs'
+            return timeinsec
 
     async def price_watcher(self):
         i = 0
@@ -230,7 +262,7 @@ class EDPriceCheckBot(discord.Client):
                         channelsplit = member.split(',')
                         channel = self.get_channel(int(channelsplit[1]))
                         if not channel is None:
-                            print("Sending alert to channel")
+                            print("Sending alert to channel " + str(member))
                             await channel.send(embed=em)
                             await asyncio.sleep(1)
                         else:

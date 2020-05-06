@@ -130,7 +130,7 @@ class EDDNListener():
             elif ratelimit == 720:
                 self.backoff = False
             if self.backoff == True:
-                sleep(6)
+                sleep(30)
             for entry in jsonmsg['stations']:
                 if entry['name'] == station:
                     if 'outpost' in entry['type'].lower():
@@ -140,11 +140,11 @@ class EDDNListener():
                         size = 'L'
                         return size
         except Exception as e:
-            sleep(10)
-            print(e)
-            if not r == None:
-                print(r.headers)
-                print(r.text)
+            if not e == None:
+                print("Error: " + str(e))
+            else:
+                print("Error with NoneType:")
+                print(e)
             size = 'Unknown'
             return size
 
@@ -177,11 +177,19 @@ class EDDNListener():
 
     def cmdty_write(self,sorteddict,cmdty):
         cmdtyfile = open(cmdty,'w')
-        for key,value in sorteddict.items():
-            age = self.time_converter(value[3])
-            cmdtyfile.write(key + ',' + str(value[0]) + ',' + str(value[1]) + ',' + value[2] + ',' + age + '\n')
-        cmdtyfile.close()
+        try:
+            for key,value in sorteddict.items():
+                age = self.time_converter(value[3])
+                cmdtyfile.write(key + ',' + str(value[0]) + ',' + str(value[1]) + ',' + value[2] + ',' + age + '\n')
+            cmdtyfile.close()
+        except Exception as e:
+            print(e)
+            for k,v in sorteddict.items():
+                print(k)
+                print(v)
+            cmdtyfile.close()
 
 EDDNListener = EDDNListener()
 EDDNListener.file_create_check()
+print("Starting parser at " + (datetime.now().strftime("%H:%M:%S %d/%y")))
 EDDNListener.eddn_parser()
