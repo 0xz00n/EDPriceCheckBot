@@ -267,7 +267,7 @@ class EDPriceCheckBot(discord.Client):
                             await asyncio.sleep(1)
                         else:
                             print("Deleting invalid channel " + str(member))
-                            self.channel_delete(channelsplit[1])
+                            self.channel_delete(member)
                     print("Done sending alerts to users")
                     self.timeout_checker()
                     await asyncio.sleep(1)
