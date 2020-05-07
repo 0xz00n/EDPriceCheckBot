@@ -419,6 +419,6 @@ class EDPriceCheckBot(discord.Client):
         print(self.user.id)
         print('------')
 
-print("Starting bot at " + (datetime.now().strftime("%H:%M:%S on %d/%m/%Y")))
+print("Starting bot at " + (datetime.now().strftime("%H:%M:%S on %m/%d/%Y")))
 client = EDPriceCheckBot()
 client.run(client.TOKEN)
