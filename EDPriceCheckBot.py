@@ -2,9 +2,9 @@
 
 import os
 import re
-import discord
 import asyncio
-from datetime import datetime
+import discord
+from datetime import datetime, time
 #Logging stuff for when stuff just stops working
 #import logging
 #logger = logging.getLogger('discord')
@@ -238,6 +238,15 @@ class EDPriceCheckBot(discord.Client):
             timeinsec = str(timeinsec) + ' secs'
             return timeinsec
 
+    def tick_check(self):
+        timebegin = time(13,50)
+        timeend = time(14,30)
+        timenow = datetime.utcnow().time()
+        if timenow >= timebegin and timenow <= timeend:
+            return True
+        else:
+            return False
+
     async def price_watcher(self):
         i = 0
         await self.wait_until_ready()
@@ -252,7 +261,7 @@ class EDPriceCheckBot(discord.Client):
                     for userid in self.dmset:
                         user = self.get_user(int(userid))
                         if not user is None:
-                            print("Sending alert to user " + str(userid))
+                            print("Sending alert to user " + str(user))
                             await user.send(embed=em)
                             await asyncio.sleep(1)
                         else:
@@ -262,7 +271,7 @@ class EDPriceCheckBot(discord.Client):
                         channelsplit = member.split(',')
                         channel = self.get_channel(int(channelsplit[1]))
                         if not channel is None:
-                            print("Sending alert to channel " + str(member))
+                            print("Sending alert to channel " + str(channel) + " in server " + str(channel.guild))
                             await channel.send(embed=em)
                             await asyncio.sleep(1)
                         else:
@@ -295,16 +304,17 @@ class EDPriceCheckBot(discord.Client):
             return
 
         #Reload DM and Membership sets as long as it's from the bot owner
-        if message.content.startswith('!reloadsets'):
+        if message.content.lower().startswith('!reloadsets'):
             if message.author.id == self.botadmin:
                 self.alertset_gen()
                 self.memberset_gen()
                 print("Both sets regenerated")
 
         #Set primary channel
-        if message.content.startswith('!setchannel'):
+        if message.content.lower().startswith('!setchannel'):
             result = self.set_channel_check(message.channel.id,message.guild.id)
             if result == True:
+                print(str(message.channel) + " has been set as the primary channel in the server " + str(message.guild))
                 self.member_write(message.guild.id, message.channel.id)
                 await message.channel.send('Channel set.')
             else:
@@ -315,7 +325,7 @@ class EDPriceCheckBot(discord.Client):
             return
 
         #Help response
-        if message.content.startswith('!help'):
+        if message.content.lower().startswith('!help'):
             em = discord.Embed(
                 title='EDPriceAlert Help',
                 description="""Available Commands:
@@ -337,11 +347,12 @@ class EDPriceCheckBot(discord.Client):
             await message.channel.send(embed=em)
 
         #Unset primary channel
-        if message.content.startswith('!unsetchannel'):
+        if message.content.lower().startswith('!unsetchannel'):
             await message.channel.send('Are you sure you want to unset this channel as the primary channel? (y/n)')
             try:
                 msg = (await self.wait_for('message',timeout=30.0)).content
                 if msg.lower()[0] == 'y':
+                    print(str(message.channel) + " has been unset as the primary channel in the server " + str(message.guild))
                     self.unset_channel(message.channel)
                     await message.channel.send('Channel unset, use `!setchannel` to set a new primary channel.')
                 elif msg.lower()[0] == 'n':
@@ -352,8 +363,8 @@ class EDPriceCheckBot(discord.Client):
                 await message.channel.send('Timed out, channel has not been modified.')
 
         #Mineral check
-        if message.content.startswith('!check'):
-            content = re.split('!check ', message.content)[-1]
+        if message.content.lower().startswith('!check'):
+            content = re.split('(?i)(!check )', message.content)[-1]
             stationlst,systemlst,pricelst,demandlst,padsizelst,agelst = self.price_grabber(content)
             if stationlst:
                 i = 0
@@ -366,7 +377,11 @@ class EDPriceCheckBot(discord.Client):
                     idescription+='Time since last update: **' + agelst[i] + '**'
                     i += 1
                 if not idescription == '':
-                    ititle = '**Top 5 prices for ' + content + '**'
+                    result = self.tick_check()
+                    if result:
+                        ititle = '_**Prices may be affected by server tick!**_\n**Top 5 prices for ' + content + '**'
+                    else:
+                        ititle = '**Top 5 prices for ' + content + '**'
                     em = discord.Embed(
                         title=ititle,
                         description=idescription,
@@ -379,7 +394,7 @@ class EDPriceCheckBot(discord.Client):
                 await message.channel.send('Unsupported or unknown mineral entered.')
 
         #Add user to DM list
-        if message.content.startswith('!getalerts'):
+        if message.content.lower().startswith('!getalerts'):
             if not str(message.author.id) in self.dmset:
                 self.alert_write(message.author)
                 await message.channel.send('Added to alert list, DM incoming!')
@@ -388,7 +403,7 @@ class EDPriceCheckBot(discord.Client):
                 await message.channel.send('You are already on the alert list.')
 
         #Delete user from DM list
-        if message.content.startswith('!stopalerts'):
+        if message.content.lower().startswith('!stopalerts'):
             self.alert_delete(message.author)
             await message.channel.send('You have been removed from the alert list.')
     
@@ -404,5 +419,6 @@ class EDPriceCheckBot(discord.Client):
         print(self.user.id)
         print('------')
 
+print("Starting bot at " + (datetime.now().strftime("%H:%M:%S on %d/%m/%Y")))
 client = EDPriceCheckBot()
 client.run(client.TOKEN)

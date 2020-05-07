@@ -192,7 +192,7 @@ class EDDNListener():
                 print(v)
             cmdtyfile.close()
 
+print("Starting parser at " + (datetime.now().strftime("%H:%M:%S on %m/%d/%Y")))
 EDDNListener = EDDNListener()
 EDDNListener.file_create_check()
-print("Starting parser at " + (datetime.now().strftime("%H:%M:%S %d/%y")))
 EDDNListener.eddn_parser()
