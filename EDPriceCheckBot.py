@@ -21,7 +21,8 @@ class EDPriceCheckBot(discord.Client):
         self.dmset = set()
         self.timeoutlst = []
         self.timeoutdict = {}
-        self.timeouttime = 60 * 1440
+        #self.timeouttime = 60 * 1440
+        self.timeouttime = 60 * 120
         self.lastcheck = datetime.now()
         self.tokenfile = open('token','r')
         self.TOKEN = self.tokenfile.readline().rstrip()
@@ -70,9 +71,12 @@ class EDPriceCheckBot(discord.Client):
         demandlst = []
         padsizelst = []
         agelst = []
+        i = 0
         with open(cmdty) as f:
             lines = f.readlines()
             for line in lines:
+                if i > 4:
+                    break
                 linesplit = line.split(',')
                 stationlst.append(linesplit[0])
                 systemlst.append(linesplit[1])
@@ -80,6 +84,7 @@ class EDPriceCheckBot(discord.Client):
                 demandlst.append('{:,}'.format(int(linesplit[3])))
                 padsizelst.append(linesplit[4])
                 agelst.append(linesplit[5])
+                i += 1
             return stationlst,systemlst,pricelst,demandlst,padsizelst,agelst
 
     def file_create_check(self):
@@ -167,32 +172,37 @@ class EDPriceCheckBot(discord.Client):
         self.member_delete(messagechannel)
 
     def alert_checker(self):
-        i = 0
-        stationlst,systemlst,pricelst,demandlst,padsizelst,agelst = self.price_grabber('ltd')
-        idescription = ''
-        while i < 5:
-            price = pricelst[i].replace(',','')
-            if int(price) >= 1400000:
-                demand = demandlst[i].replace(',','')
-                if int(demand) >= 2000:
-                    if not stationlst[i] in self.timeoutlst:
-                        print(stationlst[i] + ', ' + systemlst[i] + " has high LTD sell price!")
-                        self.timeoutlst.append(stationlst[i])
-                        idescription+='\n**' + stationlst[i] + ', ' + systemlst[i] + '**\n'
-                        idescription+='Sell price: **' + pricelst[i] + '**\n'
-                        idescription+='Demand: **' + demandlst[i] + '**\n'
-                        idescription+='Pad size: **' + padsizelst[i] + '**\n'
-                        idescription+='Time since last update: **' + agelst[i] + '**'
-            i += 1
-        if not idescription == '':
-            ititle = '**High LTD price alert!**'
-            em = discord.Embed(
-                title=ititle,
-                description=idescription,
-                color=0x00FF00
-            )
-            return em
-        else:
+        try:
+            i = 0
+            stationlst,systemlst,pricelst,demandlst,padsizelst,agelst = self.price_grabber('ltd')
+            idescription = ''
+            while i < 5:
+                price = pricelst[i].replace(',','')
+                if int(price) >= 1400000:
+                    demand = demandlst[i].replace(',','')
+                    if int(demand) >= 2000:
+                        if not stationlst[i] in self.timeoutlst:
+                            print(stationlst[i] + ', ' + systemlst[i] + " has high LTD sell price!")
+                            self.timeoutlst.append(stationlst[i])
+                            idescription+='\n**' + stationlst[i] + ', ' + systemlst[i] + '**\n'
+                            idescription+='Sell price: **' + pricelst[i] + '**\n'
+                            idescription+='Demand: **' + demandlst[i] + '**\n'
+                            idescription+='Pad size: **' + padsizelst[i] + '**\n'
+                            idescription+='Time since last update: **' + agelst[i] + '**'
+                i += 1
+            if not idescription == '':
+                ititle = '**High LTD price alert!**'
+                em = discord.Embed(
+                    title=ititle,
+                    description=idescription,
+                    color=0x00FF00
+                )
+                return em
+            else:
+                em = None
+                return em
+        except Exception as e:
+            print(e)
             em = None
             return em
 
@@ -209,7 +219,8 @@ class EDPriceCheckBot(discord.Client):
                         print("Timeout reached for " + entry)
                         del self.timeoutdict[entry]
                         self.timeoutlst.remove(entry)
-                    elif int(checkdiff.total_seconds()) >= 60*60:
+                    #elif int(checkdiff.total_seconds()) >= 60*60:
+                    elif int(checkdiff.total_seconds()) >= 60:
                         self.lastcheck = datetime.now()
                         print("----------------------------------")
                         for entry in self.timeoutlst:

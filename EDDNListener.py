@@ -70,22 +70,17 @@ class EDDNListener():
     def dict_sorter(self,dictname,cmdty):
         #Thank the stackoverflow gods for this gift of comprehension that I cannot comprehend.  REJOICE IN ITS FUNCTION!
         dictname = {k: v for k, v in sorted(dictname.items(), key=lambda item: item[1], reverse=True)}
-        if len(dictname) > 5:
-            i = 0
-            tempdict = {}
-            for key,value in dictname.items():
-                tempdict[key] = value
-                i += 1
-                if i > 4:
-                    break
-            dictname = tempdict
+        tempdict = {}
+        for key,value in dictname.items():
+            tempdict[key] = value
+        dictname = tempdict
         self.cmdty_write(dictname,cmdty)
 
     def dict_timer(self,dictname):
         deletelist = []
         for key,value in dictname.items():
             timediff = datetime.now() - value[3]
-            if int(timediff.total_seconds()) > 60*1440:
+            if int(timediff.total_seconds()) >= 60*720:
                 deletelist.append(key)
         for key in deletelist:
             del dictname[key]
@@ -154,6 +149,9 @@ class EDDNListener():
             if not os.path.exists(commodity):
                 print('Generating file for ' + commodity)
                 os.mknod(commodity)
+            else:
+                print('Generating dictionary from existing price list for ' + commodity)
+                self.dict_gen(commodity)
 
     def time_converter(self,timeobj):
         timediff = datetime.now() - timeobj
@@ -191,6 +189,19 @@ class EDDNListener():
                 print(k)
                 print(v)
             cmdtyfile.close()
+
+    def dict_gen(self,mineral):
+        mineralfile = open(mineral,'r')
+        for line in mineralfile.readlines():
+            linesplit = line.split(',')
+            station = linesplit[0]
+            system = linesplit[1]
+            price = int(linesplit[2])
+            demand = int(linesplit[3])
+            padsize = linesplit[4]
+            age = datetime.now()
+            self.add_to_dict(mineral,station,system,price,demand,padsize,age)
+        mineralfile.close()
 
 print("Starting parser at " + (datetime.now().strftime("%H:%M:%S on %m/%d/%Y")))
 EDDNListener = EDDNListener()
