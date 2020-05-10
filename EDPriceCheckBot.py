@@ -172,7 +172,7 @@ class EDPriceCheckBot(discord.Client):
         idescription = ''
         while i < 5:
             price = pricelst[i].replace(',','')
-            if int(price) >= 1500000:
+            if int(price) >= 1400000:
                 demand = demandlst[i].replace(',','')
                 if int(demand) >= 2000:
                     if not stationlst[i] in self.timeoutlst:
