@@ -21,8 +21,7 @@ class EDPriceCheckBot(discord.Client):
         self.dmset = set()
         self.timeoutlst = []
         self.timeoutdict = {}
-        #self.timeouttime = 60 * 1440
-        self.timeouttime = 60 * 120
+        self.timeouttime = 60 * 1440
         self.lastcheck = datetime.now()
         self.tokenfile = open('token','r')
         self.TOKEN = self.tokenfile.readline().rstrip()
@@ -219,8 +218,7 @@ class EDPriceCheckBot(discord.Client):
                         print("Timeout reached for " + entry)
                         del self.timeoutdict[entry]
                         self.timeoutlst.remove(entry)
-                    #elif int(checkdiff.total_seconds()) >= 60*60:
-                    elif int(checkdiff.total_seconds()) >= 60:
+                    elif int(checkdiff.total_seconds()) >= 60*60:
                         self.lastcheck = datetime.now()
                         print("----------------------------------")
                         for entry in self.timeoutlst:
