@@ -137,7 +137,7 @@ class EDDNListener():
         except Exception as e:
             if not e == None:
                 print("Error: " + str(e))
-                print(jsonmsg)
+                print(r.text)
             else:
                 print("Error with NoneType:")
                 print(e)

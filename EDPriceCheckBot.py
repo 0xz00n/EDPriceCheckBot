@@ -268,24 +268,32 @@ class EDPriceCheckBot(discord.Client):
                 em = self.alert_checker()
                 if em is not None:
                     for userid in self.dmset:
-                        user = self.get_user(int(userid))
-                        if not user is None:
-                            print("Sending alert to user " + str(user))
-                            await user.send(embed=em)
-                            await asyncio.sleep(1)
-                        else:
-                            print("Deleting invalid user " + str(userid))
-                            self.dm_delete(userid)
+                        try:
+                            user = self.get_user(int(userid))
+                            if not user is None:
+                                print("Sending alert to user " + str(user))
+                                await user.send(embed=em)
+                                await asyncio.sleep(1)
+                            else:
+                                print("Deleting invalid user " + str(userid))
+                                self.dm_delete(userid)
+                        except Exception as e:
+                            print("Error on user send:")
+                            print(e)
                     for member in self.memberset:
-                        channelsplit = member.split(',')
-                        channel = self.get_channel(int(channelsplit[1]))
-                        if not channel is None:
-                            print("Sending alert to channel " + str(channel) + " in server " + str(channel.guild))
-                            await channel.send(embed=em)
-                            await asyncio.sleep(1)
-                        else:
-                            print("Deleting invalid channel " + str(member))
-                            self.channel_delete(member)
+                        try:
+                            channelsplit = member.split(',')
+                            channel = self.get_channel(int(channelsplit[1]))
+                            if not channel is None:
+                                print("Sending alert to channel " + str(channel) + " in server " + str(channel.guild))
+                                await channel.send(embed=em)
+                                await asyncio.sleep(1)
+                            else:
+                                print("Deleting invalid channel " + str(member))
+                                self.channel_delete(member)
+                        except Exception as e:
+                            print("Error on channel send:")
+                            print(e)
                     print("Done sending alerts to users")
                     self.timeout_checker()
                     await asyncio.sleep(1)
