@@ -71,8 +71,12 @@ class EDDNListener():
         #Thank the stackoverflow gods for this gift of comprehension that I cannot comprehend.  REJOICE IN ITS FUNCTION!
         dictname = {k: v for k, v in sorted(dictname.items(), key=lambda item: item[1], reverse=True)}
         tempdict = {}
+        i = 0
         for key,value in dictname.items():
+            if i == 10:
+                break
             tempdict[key] = value
+            i += 1
         dictname = tempdict
         self.cmdty_write(dictname,cmdty)
 
