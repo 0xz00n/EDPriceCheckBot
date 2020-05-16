@@ -46,6 +46,10 @@ Sends DM to user when prices for LTD's reach 1.5mil with at least 2000 demand
 
 Removes user from DM list
 
+`!prune`
+
+Deletes all messages belonging to EDPriceCheckBot
+
 ## Running the bot from your own hardware/vps/etc
 * Gather the requirements:
     `python3 -m pip install -r requirements.txt`
