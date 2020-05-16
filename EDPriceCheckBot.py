@@ -358,6 +358,8 @@ class EDPriceCheckBot(discord.Client):
                             Sends DM to user when prices for LTD's reach 1.5mil with at least 2000 demand
                             `!stopalerts`
                             Removes user from DM list
+                            `!prune`
+                            Deletes all messages belonging to EDPriceCheckBot
                             """,
                 color=0x00FF00
             )
@@ -378,6 +380,17 @@ class EDPriceCheckBot(discord.Client):
                     await message.channel.send('Unrecognized input, preferences have not been changed.')
             except asyncio.TimeoutError:
                 await message.channel.send('Timed out, channel has not been modified.')
+
+        #Delete bot messages
+        if message.content.lower().startswith('!prune'):
+            async for message in message.channel.history(limit=200):
+                if message.author == client.user:
+                    try:
+                        await message.delete()
+                    except Exception as e:
+                        print('Failed to delete message')
+                        print(e)
+            print('Messages pruned from channel ' + str(message.channel) + ' in server ' + str(message.guild))
 
         #Mineral check
         if message.content.lower().startswith('!check'):
