@@ -355,7 +355,7 @@ class EDPriceCheckBot(discord.Client):
                             `!check x`
                             Checks top 5 mineral prices where x is the name of the mineral
                             `!getalerts`
-                            Sends DM to user when prices for LTD's reach 1.5mil with at least 2000 demand
+                            Sends DM to user when prices for LTD's reach 1.4mil with at least 2000 demand
                             `!stopalerts`
                             Removes user from DM list
                             `!prune`
@@ -367,19 +367,8 @@ class EDPriceCheckBot(discord.Client):
 
         #Unset primary channel
         if message.content.lower().startswith('!unsetchannel'):
-            await message.channel.send('Are you sure you want to unset this channel as the primary channel? (y/n)')
-            try:
-                msg = (await self.wait_for('message',timeout=30.0)).content
-                if msg.lower()[0] == 'y':
-                    print(str(message.channel) + " has been unset as the primary channel in the server " + str(message.guild))
-                    self.unset_channel(message.channel)
-                    await message.channel.send('Channel unset, use `!setchannel` to set a new primary channel.')
-                elif msg.lower()[0] == 'n':
-                    await message.channel.send('Channel preferences have not been changed.')
-                else:
-                    await message.channel.send('Unrecognized input, preferences have not been changed.')
-            except asyncio.TimeoutError:
-                await message.channel.send('Timed out, channel has not been modified.')
+            self.unset_channel(message.channel)
+            await message.channel.send('Channel unset, use `!setchannel` to set a new primary channel.')
 
         #Delete bot messages
         if message.content.lower().startswith('!prune'):
@@ -427,6 +416,7 @@ class EDPriceCheckBot(discord.Client):
         if message.content.lower().startswith('!getalerts'):
             if not str(message.author.id) in self.dmset:
                 self.alert_write(message.author)
+                print(message.author + ' has been added to the alert list.')
                 await message.channel.send('Added to alert list, DM incoming!')
                 await message.author.send('You will now get a DM every time a a station is selling for at least 1.5m and demand is at least 2,000.  To unsubscribe, send the `!stopalerts` command in the channel you subscribed from.')
             else:
@@ -435,6 +425,7 @@ class EDPriceCheckBot(discord.Client):
         #Delete user from DM list
         if message.content.lower().startswith('!stopalerts'):
             self.alert_delete(message.author)
+            print(message.author + ' has been removed from the alert list.')
             await message.channel.send('You have been removed from the alert list.')
     
     async def on_ready(self):
