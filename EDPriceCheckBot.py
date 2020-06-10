@@ -419,16 +419,16 @@ class EDPriceCheckBot(discord.Client):
         if message.content.lower().startswith('!getalerts'):
             if not str(message.author.id) in self.dmset:
                 self.alert_write(message.author)
-                print(message.author + ' has been added to the alert list.')
+                print(str(message.author) + ' has been added to the alert list.')
                 await message.channel.send('Added to alert list, DM incoming!')
-                await message.author.send('You will now get a DM every time a a station is selling for at least 1.5m and demand is at least 2,000.  To unsubscribe, send the `!stopalerts` command in the channel you subscribed from.')
+                await message.author.send('You will now get a DM every time a a station is selling for at least 1.4m and demand is at least 2,000.  To unsubscribe, send the `!stopalerts` command in the channel you subscribed from.')
             else:
                 await message.channel.send('You are already on the alert list.')
 
         #Delete user from DM list
         if message.content.lower().startswith('!stopalerts'):
             self.alert_delete(message.author)
-            print(message.author + ' has been removed from the alert list.')
+            print(str(message.author) + ' has been removed from the alert list.')
             await message.channel.send('You have been removed from the alert list.')
     
     async def on_ready(self):

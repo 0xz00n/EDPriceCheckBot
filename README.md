@@ -4,6 +4,8 @@ A Discord bot to check mineral prices and alert on high LTD prices for Elite: Da
 ### Link to add this bot to a discord server you own or admin:
 https://discordapp.com/oauth2/authorize?&client_id=701891610530807819&scope=bot&permissions=83968
 
+_Note: If the bot doesn't appear in your server, you may need to manually assign the permissions requested from the link above in your server roles._
+
 ## About
 EDPriceCheckBot lets users check current prices for a range of supported minerals.  Additionally, it will notify the primary channel of a high LTD sell price (>1.4mil, >2000 demand) along with DMing any user that has signed up for alerts with `!getalerts`.  High price stations are added to a timeout list that expires after 24 hours to prevent DM/Channel spam.
 
