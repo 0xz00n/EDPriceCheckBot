@@ -61,8 +61,6 @@ class EDDNListener():
                                     sendrequest += 1
                                 recvtime = datetime.now()
                                 self.add_to_dict(mineralname,stationname,systemname,sellprice,demand,padsize,recvtime)
-                                if mineralname == 'tritium':
-                                    print(mineralname,stationname,systemname,sellprice,demand,padsize,recvtime)
                     else:
                         continue
             except zmq.ZMQError as e:
