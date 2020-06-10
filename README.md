@@ -20,6 +20,7 @@ While using the `!check x` command where x is the mineral alias.
 | Musgravite | musgravite |
 | Grandidierite | grandidierite |
 | Serendibite | serendibite |
+| Tritium | tritium |
 
 ## Bot Help Dialogue
 `!help`

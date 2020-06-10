@@ -20,6 +20,7 @@ class EDDNListener():
         self.musgdict = {}
         self.grandict = {}
         self.seredict = {}
+        self.tritidict = {}
         self.minerals = [
             'lowtemperaturediamond',
             'opal',
@@ -27,7 +28,8 @@ class EDDNListener():
             'benitoite',
             'musgravite',
             'grandidierite',
-            'serendibite'
+            'serendibite',
+            'tritium'
         ]
 
     def eddn_parser(self):
@@ -48,7 +50,7 @@ class EDDNListener():
                     if jsonmsg['$schemaRef'] == 'https://eddn.edcd.io/schemas/commodity/3':
                         sendrequest = 0
                         for commodity in jsonmsg['message']['commodities']:
-                            if commodity['name'] in self.minerals:
+                            if commodity['name'].lower() in self.minerals:
                                 mineralname = commodity['name']
                                 stationname = jsonmsg['message']['stationName']
                                 systemname = jsonmsg['message']['systemName']
@@ -59,12 +61,15 @@ class EDDNListener():
                                     sendrequest += 1
                                 recvtime = datetime.now()
                                 self.add_to_dict(mineralname,stationname,systemname,sellprice,demand,padsize,recvtime)
+                                if mineralname == 'tritium':
+                                    print(mineralname,stationname,systemname,sellprice,demand,padsize,recvtime)
                     else:
                         continue
             except zmq.ZMQError as e:
                 print('ZMQSocketException: ' + str(e))
                 sub.disconnect(self.eddnrelay)
                 sleep(5)
+                self.eddn_parser()
             break
 
     def dict_sorter(self,dictname,cmdty):
@@ -118,12 +123,18 @@ class EDDNListener():
             self.seredict[station + ',' + system] = [sell,demand,pad,recvtime]
             self.dict_sorter(self.seredict,self.minerals[6])
             self.dict_timer(self.seredict)
+        elif mineral == self.minerals[7]:
+            self.tritidict[station + ',' + system] = [sell,demand,pad,recvtime]
+            self.dict_sorter(self.tritidict,self.minerals[7])
+            self.dict_timer(self.tritidict)
 
     def pad_size_check(self,system,station):
         try:
             r = requests.get('https://www.edsm.net/api-system-v1/stations?systemName=' + system)
             jsonmsg = json.loads(r.text)
             ratelimit = int(r.headers['X-Rate-Limit-Remaining'])
+            if ratelimit == None:
+                print('Ratelimit is NoneType')
             if ratelimit < 360:
                 self.backoff = True
             elif ratelimit == 720:

@@ -54,6 +54,9 @@ class EDPriceCheckBot(discord.Client):
         elif commodity.lower() == 'serendibite':
             stationlst,systemlst,pricelst,demandlst,padsizelst,agelst = self.cmdty_reader('serendibite')
             return stationlst,systemlst,pricelst,demandlst,padsizelst,agelst
+        elif commodity.lower() == 'tritium':
+            stationlst,systemlst,pricelst,demandlst,padsizelst,agelst = self.cmdty_reader('tritium')
+            return stationlst,systemlst,pricelst,demandlst,padsizelst,agelst
         else:
             stationlst = []
             systemlst = []
