@@ -67,7 +67,6 @@ class EDDNListener():
                 print('ZMQSocketException: ' + str(e))
                 sub.disconnect(self.eddnrelay)
                 sleep(5)
-                self.eddn_parser()
             break
 
     def dict_sorter(self,dictname,cmdty):
@@ -219,4 +218,7 @@ class EDDNListener():
 print("Starting parser at " + (datetime.now().strftime("%H:%M:%S on %m/%d/%Y")))
 EDDNListener = EDDNListener()
 EDDNListener.file_create_check()
-EDDNListener.eddn_parser()
+try:
+    EDDNListener.eddn_parser()
+except:
+    EDDNListener.eddn_parser()
