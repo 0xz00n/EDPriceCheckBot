@@ -16,13 +16,14 @@ While using the `!check x` command where x is the mineral alias.
 | Mineral | Alias |
 | --- | --- |
 | Low Temp Diamonds | ltd,ltds |
-| Void Opals | vopal,vopals, void opal, void opals |
+| Void Opals | vopal, vopals, void opal, void opals |
 | Painite | painite |
 | Benitoite | benitoite |
 | Musgravite | musgravite |
 | Grandidierite | grandidierite |
 | Serendibite | serendibite |
 | Tritium | tritium |
+| Platinum | platinum, plat |
 
 ## Bot Help Dialogue
 `!help`

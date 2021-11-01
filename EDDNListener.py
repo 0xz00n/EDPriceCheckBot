@@ -21,6 +21,7 @@ class EDDNListener():
         self.grandict = {}
         self.seredict = {}
         self.tritidict = {}
+        self.platdict = {}
         self.minerals = [
             'lowtemperaturediamond',
             'opal',
@@ -29,7 +30,8 @@ class EDDNListener():
             'musgravite',
             'grandidierite',
             'serendibite',
-            'tritium'
+            'tritium',
+            'platinum'
         ]
 
     def eddn_parser(self):
@@ -124,6 +126,10 @@ class EDDNListener():
             self.tritidict[station + ',' + system] = [sell,demand,pad,recvtime]
             self.dict_sorter(self.tritidict,self.minerals[7])
             self.dict_timer(self.tritidict)
+        elif mineral == self.minerals[8]:
+            self.platdict[station + ',' + system] = [sell,demand,pad,recvtime]
+            self.dict_sorter(self.platdict,self.minerals[8])
+            self.dict_timer(self.platdict)
 
     def pad_size_check(self,system,station):
         try:
