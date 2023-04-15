@@ -1,3 +1,4 @@
+# This bot is abandoned and has been shut down.  Please feel free to fork and update.
 # EDPriceCheckBot
 A Discord bot to check mineral prices and alert on high LTD prices for Elite: Dangerous
 
